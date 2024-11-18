@@ -50,7 +50,7 @@ jobs:
         run: |
           JULIA_REFERENCETESTS_UPDATE=true DISPLAY=:0 xvfb-run -s '-screen 0 1024x768x24' julia --depwarn=yes -e 'using Pkg; Pkg.activate(temp=true); Pkg.develop(path="."); Pkg.test("ITensorMakie")'
       - uses: julia-actions/julia-processcoverage@v1
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v5
         with:
           files: lcov.info
           token: ${{ secrets.CODECOV_TOKEN }}
