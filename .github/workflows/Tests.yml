@@ -1,0 +1,54 @@
+name: "Tests"
+on:
+  push:
+    branches:
+      - "master"
+      - "main"
+      - "release-"
+    tags: "*"
+    paths-ignore:
+      - "docs/**"
+  pull_request:
+    types:
+      - "opened"
+      - "synchronize"
+      - "reopened"
+      - "ready_for_review"
+      - "converted_to_draft"
+  workflow_dispatch: ~
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: "${{ startsWith(github.ref, 'refs/pull/') }}"
+jobs:
+  tests:
+    name: "Tests"
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          - "lts"
+          - "1"
+        os:
+          - "ubuntu-latest"
+    uses: "ITensor/ITensorActions/.github/workflows/Tests.yml@main"
+    with:
+      group: "${{ matrix.group }}"
+      julia-version: "${{ matrix.version }}"
+      os: "${{ matrix.os }}"
+      localregistry: "https://github.com/ITensor/ITensorRegistry.git"
+      apt-packages: "xorg-dev mesa-utils xvfb libgl1 freeglut3-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev"
+      test-prefix: "xvfb-run -a -s '-screen 0 1024x768x24' "
+      extra-env: "JULIA_REFERENCETESTS_UPDATE=true\n"
+    secrets:
+      CODECOV_TOKEN: "${{ secrets.CODECOV_TOKEN }}"
+  tests-gate:
+    name: "Tests"
+    needs: "tests"
+    if: "${{ always() && needs.tests.result != 'skipped' }}"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Fail if any matrix leg failed"
+        run: |
+          echo "tests.result = ${{ needs.tests.result }}"
+          test "${{ needs.tests.result }}" = "success"
+          
