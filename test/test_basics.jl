@@ -1,4 +1,4 @@
-using GLMakie
+using CairoMakie
 using ITensorMakie
 using ITensors
 using ReferenceTests
@@ -34,7 +34,11 @@ using Test
 
     fig_tn = @visualize_noeval tn
 
-    by = extension == "png" ? psnr_equality(0.5) : isequal
+    # PSNR threshold — higher is stricter. GraphMakie uses GOOD=60 / MEH=40
+    # as pass / @test_broken bands. We start with a plain threshold of 40
+    # (anything below that is a clear render regression); follow-ups can add
+    # a @test_broken band at 40–60 if we want earlier warnings.
+    by = extension == "png" ? psnr_equality(40) : isequal
 
     @test_reference "references/R.$extension" figR by = by
     @test_reference "references/R1.$extension" figR1 by = by
