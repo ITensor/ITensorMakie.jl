@@ -36,7 +36,7 @@ jobs:
       julia-version: "${{ matrix.version }}"
       os: "${{ matrix.os }}"
       localregistry: "https://github.com/ITensor/ITensorRegistry.git"
-      extra-env: "REFERENCE_TESTS_STAGING_PATH=${{ github.workspace }}/test/references-actual/\n"
+      extra-env: "REFERENCE_TESTS_STAGING_PATH=$GITHUB_WORKSPACE/test/references-actual/\n"
       upload-artifacts-path: |
         test/references/
         test/references-actual/
