@@ -36,7 +36,10 @@ jobs:
       julia-version: "${{ matrix.version }}"
       os: "${{ matrix.os }}"
       localregistry: "https://github.com/ITensor/ITensorRegistry.git"
-      upload-artifacts-path: "test/references/"
+      extra-env: "REFERENCE_TESTS_STAGING_PATH=./test/references-actual/\n"
+      upload-artifacts-path: |
+        test/references/
+        test/references-actual/
     secrets:
       CODECOV_TOKEN: "${{ secrets.CODECOV_TOKEN }}"
   tests-gate:
