@@ -36,10 +36,10 @@ jobs:
       julia-version: "${{ matrix.version }}"
       os: "${{ matrix.os }}"
       localregistry: "https://github.com/ITensor/ITensorRegistry.git"
-      apt-packages: "xorg-dev mesa-utils xvfb libgl1 freeglut3-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev"
-      test-prefix: "xvfb-run -a -s '-screen 0 1024x768x24' "
-      extra-env: "JULIA_REFERENCETESTS_UPDATE=true\n"
-      upload-artifacts-path: "test/references/"
+      extra-env: "REFERENCE_TESTS_STAGING_PATH=$GITHUB_WORKSPACE/test/references-actual/\n"
+      upload-artifacts-path: |
+        test/references/
+        test/references-actual/
     secrets:
       CODECOV_TOKEN: "${{ secrets.CODECOV_TOKEN }}"
   tests-gate:
