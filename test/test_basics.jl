@@ -40,10 +40,26 @@ using Test
     # a @test_broken band at 40–60 if we want earlier warnings.
     by = extension == "png" ? psnr_equality(40) : isequal
 
-    @test_reference "references/R.$extension" figR by = by
-    @test_reference "references/R1.$extension" figR1 by = by
-    @test_reference "references/R2.$extension" figR2 by = by
-    @test_reference "references/tn.$extension" fig_tn by = by
+    # Each `@test_reference` call gets its own `@testset` so a mismatch in
+    # one doesn't prevent the others from running. ReferenceTests.jl throws
+    # a Julia error (not a `@test false`) on mismatch; inside a single
+    # surrounding `@testset`, that error bails the remaining statements in
+    # the block before the later `@test_reference` calls get a chance to
+    # execute. In CI this matters when refs genuinely need refreshing: we
+    # want ALL mismatched renders captured in the staging directory in one
+    # run, not just the first one.
+    @testset "R" begin
+        @test_reference "references/R.$extension" figR by = by
+    end
+    @testset "R1" begin
+        @test_reference "references/R1.$extension" figR1 by = by
+    end
+    @testset "R2" begin
+        @test_reference "references/R2.$extension" figR2 by = by
+    end
+    @testset "tn" begin
+        @test_reference "references/tn.$extension" fig_tn by = by
+    end
 
     R = @visualize fig_grid ELn0 * ψn1n2 * hn1 * hn2 * ERn2
     R1 = @visualize! fig_grid[1, 2] ELn0 * ψn1n2 * hn1
