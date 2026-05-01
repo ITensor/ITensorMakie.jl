@@ -5,6 +5,7 @@ on:
       - "master"
       - "main"
       - "release-"
+    tags: "*"
     paths-ignore:
       - "docs/**"
   pull_request:
@@ -29,16 +30,14 @@ jobs:
           - "1"
         os:
           - "ubuntu-latest"
-    uses: "ITensor/ITensorActions/.github/workflows/Tests.yml@main"
+          - "macOS-latest"
+          - "windows-latest"
+    uses: "ITensor/ITensorActions/.github/workflows/Tests.yml@v1"
     with:
       group: "${{ matrix.group }}"
       julia-version: "${{ matrix.version }}"
       os: "${{ matrix.os }}"
       localregistry: "https://github.com/ITensor/ITensorRegistry.git"
-      extra-env: "REFERENCE_TESTS_STAGING_PATH=$GITHUB_WORKSPACE/test/references-actual/\n"
-      upload-artifacts-path: |
-        test/references/
-        test/references-actual/
     secrets:
       CODECOV_TOKEN: "${{ secrets.CODECOV_TOKEN }}"
   tests-gate:
